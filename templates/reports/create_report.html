@@ -1,0 +1,51 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Create Report{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-5">
+                    <h2 class="card-title mb-4"><i class="fas fa-file-alt"></i> Create Report</h2>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title *</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description *</label>
+                            <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="report_type" class="form-label">Report Type * 
+                                <i class="fas fa-question-circle" title="Home = Only you and admin can see. Community = Everyone can see"></i>
+                            </label>
+                            <select class="form-select" id="report_type" name="report_type" required>
+                                <option value="">Select type...</option>
+                                <option value="home">Home (Private - Only me & admin)</option>
+                                <option value="community">Community (Public - Everyone)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" placeholder="e.g., Market Road, Near Park">
+                        </div>
+                        <div class="mb-3">
+                            <label for="photo" class="form-label">Photo (Optional)</label>
+                            <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+                        </div>
+                        <div class="mb-3">
+                            <label for="video" class="form-label">Video (Optional)</label>
+                            <input type="file" class="form-control" id="video" name="video" accept="video/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Post Report</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

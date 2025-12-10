@@ -1,0 +1,77 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ report.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h2>{{ report.title }}</h2>
+                        {% if report.status == 'resolved' %}
+                            <span class="badge bg-success" style="height: fit-content;">✓ RESOLVED</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-muted">
+                        By {{ report.created_by.get_full_name }} on {{ report.created_at|date:"M d, Y H:i" }}
+                    </p>
+                    <hr>
+                    <p>{{ report.description }}</p>
+                    {% if report.location %}
+                        <p><strong>Location:</strong> {{ report.location }}</p>
+                    {% endif %}
+                    {% if report.photo %}
+                        <img src="{{ report.photo.url }}" class="img-fluid mb-3" style="max-height: 400px;">
+                    {% endif %}
+                    
+                    {% if user.is_community_admin and report.status != 'resolved' %}
+                        <form method="post" class="mt-4">
+                            {% csrf_token %}
+                            <button type="submit" name="resolve" class="btn btn-success">Mark as Resolved</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Comments</h5>
+                    {% for comment in comments %}
+                        <div class="mb-3 pb-3 border-bottom">
+                            <strong>{{ comment.user.get_full_name }}</strong>
+                            <small class="text-muted">{{ comment.created_at|date:"M d, Y H:i" }}</small>
+                            <p>{{ comment.content }}</p>
+                        </div>
+                    {% endfor %}
+
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <textarea class="form-control" name="comment" placeholder="Add a comment..." rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Details</h5>
+                    <p><strong>Status:</strong> {{ report.get_status_display }}</p>
+                    <p><strong>Type:</strong> {{ report.get_report_type_display }}</p>
+                    <p><strong>Created:</strong> {{ report.created_at|date:"M d, Y" }}</p>
+                    {% if report.resolved_by %}
+                        <p><strong>Resolved by:</strong> {{ report.resolved_by.get_full_name }}</p>
+                    {% endif %}
+                    {% if user == report.created_by or user.is_community_admin %}
+                        <a href="{% url 'reports:delete_report' report.id %}" class="btn btn-danger btn-sm w-100">Delete</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
